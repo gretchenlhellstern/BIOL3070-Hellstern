@@ -20,14 +20,20 @@ Gretchen Hellstern
 
 # Abstract
 
-Using a common DNA collection technique, PCR, and sequencing, we were
-able to obtain a data set of species that had been bitten by mosquitoes,
-some containing WNV and some not. We gained a large collection of house
-finch data, which helped confirm our hypothesis that they are amplifying
-hosts in the spread of WNV. This is supported by our data comparing the
-amount of each species found at each test location, the detection of WNV
-in their blood, and the statistical sigificance of the correlation
-between house finches and WNV.
+Mosquitoes are a common vector of West Nile Virus. Populations of
+moquitoes in Salt Lake City, Utah have been showing groupings of WNV.
+The spread of WNV seems to be aided by many animals around the city.
+House finches are a common bird species in SLC. The relationship between
+these two species and the spread of WNV is the focus of our study. We
+aim to determine if house finches are an amplifying host of WNV. Using a
+common DNA collection technique, PCR, and sequencing, we were able to
+obtain a data set of species that had been bitten by mosquitoes, some
+containing WNV and some not. We gained a large collection of house finch
+data, which helped confirm our hypothesis that they are amplifying hosts
+in the spread of WNV. This is supported by our data comparing the amount
+of each species found at each test location, the detection of WNV in
+their blood, and the statistical sigificance of the correlation between
+house finches and WNV.
 
 # Background
 
