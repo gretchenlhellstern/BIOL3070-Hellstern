@@ -10,11 +10,11 @@ Gretchen Hellstern
   - [Hypothesis](#hypothesis)
   - [Prediction](#prediction)
 - [Methods](#methods)
-  - [First analysis](#first-analysis)
-  - [Second analysis](#second-analysis)
+  - [First Analysis](#first-analysis)
+  - [Second Analysis](#second-analysis)
 - [Discussion](#discussion)
-  - [Interpretation of 1st analysis](#interpretation-of-1st-analysis)
-  - [Interpretation of 2nd analysis](#interpretation-of-2nd-analysis)
+  - [Interpretation of 1st Analysis](#interpretation-of-1st-analysis)
+  - [Interpretation of 2nd Analysis](#interpretation-of-2nd-analysis)
 - [Conclusion](#conclusion)
 - [References](#references)
 
@@ -41,17 +41,14 @@ West Nile Virus is a common virus in the USA that is spread by the
 insect vector of the mosquito. Female mosquitoes bite birds and mammals
 to gain blood meal needed to foster young. In the process of obtaining
 blood meal, mosquitoes can transfer viruses to the host they’ve bitten.
-If that host gets bitten again, that mosquito can than move that virus
-to another host, increasing the spread of the virus. House finches are
+If that host gets bitten again, that mosquito can move that virus to
+another host, increasing the spread of the virus. House finches are
 among the susceptible hosts. In a recent study, it was found that out of
 a number of common birds, house finches can harbor the virus in their
-blood longer than most. This viremia duration barplot (Kumar et al.,
+blood longer than most. This viremia duration bar plot (Kumar et al.,
 2003) illustrates the potential importance of house finches in WNV
 transmission and as the logical foundation for our hypothesis that house
-finches serve as amplifying hosts for WNV. This also supports
-ourprediction that locations with more house finches in our blood host
-analysis are also the same locations with higher positive tests for WNV
-in mosquito pools.
+finches serve as amplifying hosts for WNV.
 
 ``` r
 # Manually transcribe duration (mean, lo, hi) from the last table column
@@ -118,12 +115,13 @@ and used the BLASTn software to identify the species the blood meal came
 from. We used the species with the highest e-value as our results, as
 those are the ones the DNA most closely matched.
 
-## First analysis
+## First Analysis
 
 We compared the number of mosquito blood meals from each host species
 between the sites with no WNV detected and the sites with WNV detected.
 The bar plot format helps us to visualize the differences between
-species, as well as between the two sites.
+species, as well as between the two sites. We gained this data from
+provided code that formed our bar plot.
 
 ``` r
 ## import counts_matrix: data.frame with column 'loc_positives' (0/1) and host columns 'host_*'
@@ -221,11 +219,12 @@ par(op)
 host_species_colors <- species_colors
 ```
 
-## Second analysis
+## Second Analysis
 
 We then statistically tested whether the presence of house finch blood
-meal predicts the presence of WNV or not. We are able to gain a p-value,
-which tells us if our results are statistically significant or not.
+meal predicts the presence of WNV or not. We used provided code to find
+our p-value, which tells us if our results are statistically significant
+or not.
 
 ``` r
 # second-analysis-or-plot, glm with house finch alone against binary +/_
@@ -286,22 +285,30 @@ summary(glm2)
 
 Based off of the results we collected, we are able to support our
 hypothesis that house finches act as important amplifying hosts in the
-Salt Lake City area.
+Salt Lake City area. Using our determined data, we can see that house
+finches are more likely to have been bitten, thus increasing there
+chances of carrying WNV. This further confirms our hypothesis, as they
+will go through a cycle of getting bit and transferring the disease
+further.
 
-## Interpretation of 1st analysis
+## Interpretation of 1st Analysis
 
 Our first analysis showed that not only is the count of house finches
 higher at areas with WNV, but the count of house finches at either
 location is the highest of any species. This shows that they are already
 favored by mosquitoes to some degree, so they would aide in the spread
-of WNV accidentally anyways.
+of WNV accidentally anyways, proving our hypothesis that house finches
+act as amplifying hosts.
 
-## Interpretation of 2nd analysis
+## Interpretation of 2nd Analysis
 
 Our second analysis shows that the presence of house finch blood meal
 has a statistically significant correlation to the presence of WNV. We
 had a p-value of 4.54E-5, which confirms that our results are
-statiscally significant and are not due to chance.
+statistically significant and are not due to chance. With this
+significant result, we can confidently support our prediction that
+trapping areas with higher rates of WNV will also show higher house
+finch populations.
 
 # Conclusion
 
@@ -312,7 +319,11 @@ role in the spread of WNV, and that the presence of house finches
 indicates that WNV is most likely present. This can help us in targeting
 areas with a dense population of house finches and trying to control the
 growth of mosquito populations in that area. We can also inform our
-citizens to be weary of areas containing house finches.
+citizens to be weary of areas containing house finches. One limitation
+is our study is that we can’t track all the mosquitoes and house finches
+in SLC, so our data could be slightly off since it was just a proportion
+of the population tested, but it’s a good starting point. This can help
+guide us in the right direction of where to go next.
 
 # References
 
