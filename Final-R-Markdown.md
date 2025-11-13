@@ -1,87 +1,222 @@
-Individual Rmarkdown Report: Air Quality and Lung Disease in USA
+COPD Prevalence Map
 ================
 Gretchen Hellstern
-2025-10-29
+2025-11-13
 
-- [Abstract](#abstract)
-- [Background](#background)
-- [Study Question and Hypothesis](#study-question-and-hypothesis)
-  - [Questions](#questions)
-  - [Hypothesis](#hypothesis)
-  - [Prediction](#prediction)
-- [Methods](#methods)
-  - [First Analysis](#first-analysis)
-  - [Interpretation of 1st Analysis](#interpretation-of-1st-analysis)
-  - [Interpretation of 2nd Analysis](#interpretation-of-2nd-analysis)
-- [Conclusion](#conclusion)
-- [References](#references)
+\#Background
 
-# Abstract
-
-# Background
-
-# Study Question and Hypothesis
-
-## Questions
-
-Do areas of low air quality have higher rates of lung diseases?
-
-## Hypothesis
-
-We expect areas with lower quality air on average will have higher rates
-of lung disease and lung related mortality.
-
-## Prediction
-
-# Methods
-
-## First Analysis
+## Setup
 
 ``` r
-# Install (only needed once per project)
-# install.packages(c("tidyverse", "viridis"))
+lines <- str_split(data_text, "\n")[[1]]
+lines <- trimws(lines)
+lines <- lines[lines != ""]
+lines <- lines[-1]
 
-# Load libraries
-library(tidyverse)
-library(viridis)
+# 4. Define the pattern
+pattern <- "^([A-Za-z .()0-9]+?)\\s+(\\d+\\.\\d)\\s+([\\d,]+)\\s+(\\d+\\.\\d)\\s+([\\d,]+)\\s+(\\d+\\.\\d)\\s+([\\d,]+)$"
+rows <- str_match(lines, pattern)
+rows <- rows[!is.na(rows[,1]), ]
 
-# Read in the data
-copd <- read_csv("state_gender_data.csv")
+# 7. Create the data frame
+df <- as.data.frame(rows[,2:8])
+colnames(df) <- c("State","Percent_Male","Count_Male","Percent_Female","Count_Female","Percent_Total","Count_Total")
+df <- df %>%
+  # Filter out rows i don't want to plot
+  filter(State != "United States") %>%
+  filter(State != "District of Columbia") %>% # <-- NEW FIX: Remove D.C.
+  # Convert columns to the right type
+  mutate(across(starts_with("Percent"), as.numeric),
+         across(starts_with("Count"), ~ as.numeric(str_replace_all(.x, ",", ""))),
+         
+         State = str_replace(State, "\\s*\\(.*\\)", ""), # Removes (2020)
+         State = str_trim(State))                       # Removes whitespace
+# data check
+print("--- Cleaned Data Frame ---")
+```
 
-# Remove the national total
-copd <- copd %>% filter(State != "United States")
+    ## [1] "--- Cleaned Data Frame ---"
 
-# Create scatterplot: Female vs. Male COPD prevalence
-ggplot(copd, aes(x = Male_Percent, y = Female_Percent, 
-                 size = Total_Percent, color = Total_Percent, label = State)) +
-  geom_point(alpha = 0.8) +
-  geom_text(aes(label = State), hjust = 1.2, vjust = 0.5, size = 3, check_overlap = TRUE) +
-  scale_color_viridis(name = "Total COPD (%)", option = "C", direction = -1) +
-  scale_size_continuous(name = "Total COPD (%)") +
-  labs(
-    title = "COPD Prevalence by State: Male vs. Female (2021)",
-    x = "Male COPD Prevalence (%)",
-    y = "Female COPD Prevalence (%)"
-  ) +
-  theme_minimal(base_size = 12) +
+``` r
+print(head(df))
+```
+
+    ##        State Percent_Male Count_Male Percent_Female Count_Female Percent_Total
+    ## 1    Alabama          8.6     161900           10.1       207500           9.4
+    ## 2     Alaska          5.3      15300            6.1        16100           5.7
+    ## 3    Arizona          5.0     137800            6.4       180700           5.7
+    ## 4   Arkansas          8.6      97600           10.5       125600           9.6
+    ## 5 California          4.5     680600            4.7       733100           4.6
+    ## 6   Colorado          4.3      98900            5.9       135100           5.1
+    ##   Count_Total
+    ## 1      369400
+    ## 2       31400
+    ## 3      318500
+    ## 4      223200
+    ## 5     1413800
+    ## 6      233900
+
+``` r
+# 1. map data
+states_map <- map_data("state")
+
+# 2. heat map data to join
+heatmap_data <- df %>%
+  select(State, Percent_Female, Percent_Male) %>%
+  pivot_longer(cols = starts_with("Percent_"),
+               names_to = "Group",
+               values_to = "Percent") %>%
+  mutate(Group = str_replace(Group, "Percent_", ""),
+         region = tolower(State)) 
+map_plot_data <- left_join(states_map, heatmap_data, by = "region")
+```
+
+    ## Warning in left_join(states_map, heatmap_data, by = "region"): Detected an unexpected many-to-many relationship between `x` and `y`.
+    ## ℹ Row 1 of `x` matches multiple rows in `y`.
+    ## ℹ Row 1 of `y` matches multiple rows in `x`.
+    ## ℹ If a many-to-many relationship is expected, set `relationship =
+    ##   "many-to-many"` to silence this warning.
+
+``` r
+# NEW stuff this better work:
+map_plot_data %>%
+  filter(!is.na(Group)) %>% 
+  ggplot(aes(x = long, y = lat, group = group, fill = Percent)) +
+  
+  geom_polygon(color = "white", size = 0.1) + # Draw the states
+  scale_fill_viridis_c(name = "Percent") +
+  facet_wrap(~ Group) + 
+  labs(title = "COPD Prevalence by U.S. State and Gender") +
+  theme_void() + 
+  coord_map() + 
   theme(
-    plot.title = element_text(size = 14, face = "bold", hjust = 0.5),
-    legend.position = "right"
+    legend.position = "right",
+    plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
+    strip.text = element_text(size = 14, face = "bold")
+  
   )
 ```
 
-![](Final-R-Markdown_files/figure-gfm/scatterplot-1.png)<!-- --> \#
-Discussion
+    ## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+    ## ℹ Please use `linewidth` instead.
+    ## This warning is displayed once every 8 hours.
+    ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+    ## generated.
 
-------------------------------------------------------------------------
+![](Final-R-Markdown_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
 
-## Interpretation of 1st Analysis
 
-## Interpretation of 2nd Analysis
+    ``` r
+    states_map <- map_data("state") 
+    difference_data <- df %>%
+      mutate(
+        Percent_Difference = Percent_Female - Percent_Male,
+        region = tolower(State) # <-- This creates the join key
+      ) %>%
+      select(region, Percent_Difference)
+    map_diff_data <- left_join(states_map, difference_data, by = "region")
+    ggplot(map_diff_data, aes(x = long, y = lat, group = group, fill = Percent_Difference)) +
+      geom_polygon(color = "white", size = 0.1) + # Draw the states
+      # 5. Use the DIVERGING color scale
+      scale_fill_gradient2(
+        name = "Percent Difference\n(Female - Male)",
+        low = "blue",      # States where males are higher (negative)
+        mid = "white",     # States where rates are equal (zero)
+        high = "red",      # States where females are higher (positive)
+        midpoint = 0       # We center the scale at zero
+      ) +
+      
+      labs(title = "Difference in COPD Prevalence (Female vs. Male)") +
+      theme_void() + # Use a clean theme
+      coord_map() +  # Use correct map projection
+      theme(
+        legend.position = "right",
+        plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
+        legend.title = element_text(size = 10),
+        legend.text = element_text(size = 9)
+      )
 
-# Conclusion
+![](Final-R-Markdown_files/figure-gfm/unnamed-chunk-4-1.png)<!-- --> \#
+air quality index
 
-# References
+``` r
+# more packages
+library(dplyr)
+library(tidyr)
+library(stringr)
+library(ggplot2)
+library(viridis)
+library(maps)
+library(readr) # Added to read the CSV
+```
 
-2.  ChatGPT. OpenAI, version Jan 2025. Used as a reference for functions
-    such as plot() and to correct syntax errors. Accessed 2025-10-29.
+``` r
+aq_df <- read_csv("air-quality-by-state-2025.csv")
+```
+
+    ## Rows: 51 Columns: 6
+    ## ── Column specification ────────────────────────────────────────────────────────
+    ## Delimiter: ","
+    ## chr (1): state
+    ## dbl (4): AirQuality_AirQualityIndexViaUSA_num_YearFree, AirQualityRankViaUSN...
+    ## lgl (1): stateFlagCode
+    ## 
+    ## ℹ Use `spec()` to retrieve the full column specification for this data.
+    ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+``` r
+print("--- Air Quality Data ---")
+```
+
+    ## [1] "--- Air Quality Data ---"
+
+``` r
+print(head(aq_df))
+```
+
+    ## # A tibble: 6 × 6
+    ##   stateFlagCode state         AirQuality_AirQualityInde…¹ AirQualityRankViaUSN…²
+    ##   <lgl>         <chr>                               <dbl>                  <dbl>
+    ## 1 NA            Utah                                 51.2                     46
+    ## 2 NA            Georgia                              48.2                     26
+    ## 3 NA            Ohio                                 48.2                     36
+    ## 4 NA            West Virginia                        47.6                      6
+    ## 5 NA            Indiana                              47.5                     37
+    ## 6 NA            Tennessee                            47.5                     28
+    ## # ℹ abbreviated names: ¹​AirQuality_AirQualityIndexViaUSA_num_YearFree,
+    ## #   ²​AirQualityRankViaUSNews_2024
+    ## # ℹ 2 more variables: DaysWithUnhealthyAirQuality_2024 <dbl>,
+    ## #   AirQualityIndustrialToxinConcentration_2024 <dbl>
+
+``` r
+states_map <- map_data("state")
+
+aq_data_to_plot <- aq_df %>%
+  # Use the correct column names: `state` and `AirQuality_AirQualityIndexViaUSA_num_YearFree`
+  # We also rename the long AQI column to `Overall_AQI` to make it easier to use
+  select(State = state, Overall_AQI = `AirQuality_AirQualityIndexViaUSA_num_YearFree`) %>% 
+  mutate(region = tolower(State)) # <-- This creates the join key
+
+map_plot_data <- left_join(states_map, aq_data_to_plot, by = "region")
+
+
+map_plot_data <- map_plot_data %>%
+  filter(!is.na(Overall_AQI))
+
+ggplot(map_plot_data, aes(x = long, y = lat, group = group, fill = Overall_AQI)) +
+  geom_polygon(color = "white", size = 0.1) + # Draw the states
+  
+  scale_fill_viridis_c(name = "Overall AQI") +
+  
+  labs(title = "Overall Air Quality Index (AQI) by U.S. State (2025)") +
+  theme_void() + # Use a clean theme
+  coord_map() +  # Use correct map projection
+  theme(
+    legend.position = "right",
+    plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
+    legend.title = element_text(size = 10),
+    legend.text = element_text(size = 9)
+  )
+```
+
+![](Final-R-Markdown_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
