@@ -202,4 +202,4 @@ Based on the data we collected, our results indicate that house finches play an 
 
 1. Komar N, Langevin S, Hinten S, Nemeth N, Edwards E, Hettler D, Davis B, Bowen R, Bunning M. Experimental infection of North American birds with the New York 1999 strain of West Nile virus. Emerg Infect Dis. 2003 Mar;9(3):311-22. https://doi.org/10.3201/eid0903.020628
 
-2. ChatGPT. OpenAI, version Jan 2025. Used as a reference for functions such as plot() and to correct syntax errors. Accessed `r Sys.Date()`.
+2. ChatGPT. OpenAI, version Jan 2025. Accessed `r Sys.Date()`.
