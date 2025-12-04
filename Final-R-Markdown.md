@@ -1,7 +1,7 @@
 COPD Prevalence Map
 ================
 Gretchen Hellstern
-2025-11-20
+2025-12-04
 
 # ABSTRACT
 
@@ -29,9 +29,9 @@ air pollutants, as determined by the Clean Air Act, which are
 ground-level ozone, particle pollution, carbon monoxide, and sulfur
 dioxide. AQI is measured on a scale of 0-500, with 0 being the cleanest
 air and 500 being the most hazardous. This categorizes 0 as the highest
-air quality and 500 as the lowest air quality. AQI is a useful tool that
-has become integrated into our weather apps, making it accessible to the
-majority of the population.
+air quality and 500 as the lowest air quality (American Lung Association
+et al., 2023). AQI is a useful tool that has become integrated into our
+weather apps, making it accessible to the majority of the population.
 
 One of the primary causes of death in urban areas is chronic obstructive
 pulmonary disease (COPD). COPD can be caused by many factors including
@@ -39,7 +39,7 @@ tobacco use, occupational factors, infection, and air pollution. This
 disease progresses slowly and worsens with prolonged exposure. The
 damage is usually not reversible and can lead to pulmonary failure.
 There are many factors that play into the prevalence of COPD like
-region, age, and sex.
+region, age, and sex (Duan et al., 2020).
 
 # STUDY QUESTION & HYPOTHESIS
 
@@ -68,6 +68,7 @@ data. First, we define define our pattern and format the COPD data.
 Second, we create our data frame.
 
 ``` r
+# This chunk was generated with AI
 lines <- str_split(data_text, "\n")[[1]]
 lines <- trimws(lines)
 lines <- lines[lines != ""]
@@ -97,6 +98,7 @@ Creation of the COPD gender maps and colors. We first join the map data
 and create the color scale. We then map the data.
 
 ``` r
+# This chunk was troubleshooted and enhanced with AI
 # 1. map data
 states_map <- map_data("state")
 
@@ -139,6 +141,7 @@ differentiate male and female. Second, we plot the difference. Lastly,
 the color scale is created and the map is printed.
 
 ``` r
+# This chunk was troubleshooted and enhanced with AI
 states_map <- map_data("state") 
 difference_data <- df %>%
   mutate(
@@ -182,6 +185,7 @@ the raw data. Second, we join the reformatted data to the mapping
 package. Lastly, we print the map
 
 ``` r
+# This chunk was troubleshooted and enhanced with AI
 states_map <- map_data("state")
 
 aq_data_to_plot <- aq_df %>%
@@ -224,6 +228,7 @@ libraries. Then, we load in our data and format to recombine them.
 Lastly, we normalize our data using the SQRT method.
 
 ``` r
+# This chunk was troubleshooted and enhanced with AI
 # 1. Make sure you have the 'readr' library
 library(readr)
 library(dplyr)
@@ -272,6 +277,7 @@ This code plots our SQRT and SQRT reflected data. We first create the
 histogram and colors. Second, we create the axes.
 
 ``` r
+# This chunk was troubleshooted with AI
 ggplot(df, aes(x = Percent_Total)) +
   geom_histogram(binwidth = 1, fill = "skyblue", color = "black") +
   labs(
@@ -287,8 +293,8 @@ ggplot(df, aes(x = Percent_Total)) +
 
 ![](Final-R-Markdown_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 
-Figure 4. Overall COPD rate percent is shown to be around 6, with some
-variation among other states.
+Figure 4. Normalization of skewed data. We chose the SQRT method of
+normalization at the recommendation of Dr. Saarman
 
 ``` r
 ggplot(aq_df, aes(x = `AirQuality_AirQualityIndexViaUSA_num_YearFree`)) +
@@ -317,6 +323,7 @@ This code runs our combined data through a pearson correlation test, and
 a GLM model validate our data significance.
 
 ``` r
+# AI was not used in this chunk
 # Run a Pearson's Correlation Test
 total_corr_test <- cor.test(combined_df$AQI_Normalized, combined_df$Percent_Total_Norm)
 
@@ -364,6 +371,8 @@ print(summary(total_lm_model))
 This code runs the same code as above between sexes.
 
 ``` r
+# AI was not used in this chunk
+
 # Correlation for MALES
 male_corr_test <- cor.test(combined_df$AQI_Normalized, combined_df$Percent_Male_Norm)
 print(male_corr_test)
@@ -403,6 +412,7 @@ This code runs a GLM model against each sex to determine if there is
 statistical significance between sexes
 
 ``` r
+# This code was troubleshooted with AI
 long_df <- combined_df %>%
   select(State, AQI_Normalized, Percent_Male_Norm, Percent_Female_Norm) %>%
   pivot_longer(
@@ -479,10 +489,10 @@ obstructive pulmonary disease. Chronic Diseases and Translational
 Medicine, 6(4), 260–269. <https://doi.org/10.1016/j.cdtm.2020.05.004>
 
 Google. (2025). Gemini (Version Jan 2025) \[Large language model\].
-Accessed 2025-11-20.
+Accessed 2025-12-04.
 
 OpenAI. (2025). ChatGPT (Jan 2025 version) \[Large language model\].
-Accessed 2025-11-20.
+Accessed 2025-12-04.
 
 World Population Review. (2025). Air Quality by State 2025.
 <https://worldpopulationreview.com/state-rankings/air-quality-by-state>
