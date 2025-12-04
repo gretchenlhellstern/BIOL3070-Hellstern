@@ -1,4 +1,4 @@
-COPD Prevalence Map
+COPD PREVALENCE MAP
 ================
 Gretchen Hellstern
 2025-12-04

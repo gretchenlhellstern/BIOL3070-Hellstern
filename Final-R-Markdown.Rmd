@@ -1,5 +1,5 @@
 ---
-title: "COPD Prevalence Map"
+title: "COPD PREVALENCE MAP"
 author: "Gretchen Hellstern"
 date: "`r Sys.Date()`"
 output: github_document
